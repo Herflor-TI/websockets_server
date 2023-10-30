@@ -1,0 +1,44 @@
+/etc/supervisor/supervisord.conf
+
+systemctl start supervisor
+systemctl status supervisor
+systemctl restart supervisor
+
+[program:laravel-websockets]
+command=php /home/cloudpanel/htdocs/bookingbroadcast.inmobiliaria-mazamitla.com/artisan websockets:serve
+process_name=%(program_name)s_%(process_num)02d
+numprocs=2
+priority=4
+autostart=true
+autorestart=true
+startsecs=1
+startretries=3
+user=root
+redirect_stderr=true
+stdout_logfile=/home/cloudpanel/htdocs/bookingbroadcast.inmobiliaria-mazamitla.com/storage/logs/supervisor/websockets.log
+
+[program:nextjs-start]
+directory=/home/cloudpanel/htdocs/nextjs.inmobiliaria-mazamitla.com
+command=yarn run start
+process_name=%(program_name)s_%(process_num)02d
+numprocs=1
+priority=1
+autostart=true
+autorestart=true
+startsecs=1
+startretries=3
+user=root
+redirect_stderr=true
+
+[program:laravel-queue]
+command=php /home/cloudpanel/htdocs/ssr.inmobiliaria-mazamitla.com/artisan queue:work --tries=3 --timeout=320
+process_name=%(program_name)s_%(process_num)02d
+numprocs=8
+priority=1
+autostart=true
+autorestart=true
+startsecs=1
+startretries=3
+user=root
+redirect_stderr=true
+stdout_logfile=/home/cloudpanel/htdocs/ssr.inmobiliaria-mazamitla.com/storage/logs/supervisor/worker.log
